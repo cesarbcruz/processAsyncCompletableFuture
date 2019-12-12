@@ -45,7 +45,7 @@ public class ExemploService {
                     .map(completableFuture -> completableFuture.join())
                     .collect(Collectors.toList());
         });
-
+        logger.info("Executando...");
         // Aguardando todos finalizar
         List<String> resultAll = allCompletableFuture.get(5, TimeUnit.MINUTES);
         logger.info("Total Processados: " + resultAll.size());
