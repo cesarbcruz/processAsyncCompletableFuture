@@ -14,7 +14,7 @@ public class NotificacaoService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificacaoService.class);
 
-    public CompletableFuture<String> notificar(Integer num) {
+    public CompletableFuture<NotificacaoResultado> notificar(Integer num) {
         return CompletableFuture.supplyAsync(() -> {
             String results = "<" + num + ">";
 
@@ -40,10 +40,10 @@ public class NotificacaoService {
 
             logger.info("OK: " + results);
             
-            return results;
+            return new NotificacaoResultado(results, true);
         }).exceptionally(ex -> {
-            logger.error("Something went wrong : ", ex);
-            return null;
+            logger.error("Error: ", ex);
+            return new NotificacaoResultado(ex.getMessage(), false);
         });
     }
 

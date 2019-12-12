@@ -34,26 +34,26 @@ public class ExemploService {
         List<Integer> lista = getMockList();
 
         logger.info("INICIO");
-        List<CompletableFuture<String>> completableFutures
+        List<CompletableFuture<NotificacaoResultado>> completableFutures
                 = lista.stream().map(num -> service.notificar(num)).collect(Collectors.toList());
 
         CompletableFuture<Void> allFutures = CompletableFuture
                 .allOf(completableFutures.toArray(new CompletableFuture[completableFutures.size()]));
 
-        CompletableFuture<List<String>> allCompletableFuture = allFutures.thenApply(future -> {
+        CompletableFuture<List<NotificacaoResultado>> allCompletableFuture = allFutures.thenApply(future -> {
             return completableFutures.stream()
                     .map(completableFuture -> completableFuture.join())
                     .collect(Collectors.toList());
         });
         logger.info("Executando...");
         // Aguardando todos finalizar
-        List<String> resultAll = allCompletableFuture.get(5, TimeUnit.MINUTES);
+        List<NotificacaoResultado> resultAll = allCompletableFuture.get(5, TimeUnit.MINUTES);
         logger.info("Total Processados: " + resultAll.size());
 
         // Obtendo falhas
         CompletableFuture<Long> countFalha = allCompletableFuture.thenApply(pageContents -> {
             return pageContents.stream()
-                    .filter(Objects::isNull)
+                    .filter(NotificacaoResultado::isFalha)
                     .count();
         });
 
