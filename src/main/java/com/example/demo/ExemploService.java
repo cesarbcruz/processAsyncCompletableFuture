@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +29,11 @@ public class ExemploService {
 
     public Integer run() throws Exception {
 
-        logger.info("INICIO");
 
+        logger.info("PREPARAÇÂO DADOS PARA TESTE");
         List<Integer> lista = getMockList();
 
+        logger.info("INICIO");
         List<CompletableFuture<String>> completableFutures
                 = lista.stream().map(num -> service.notificar(num)).collect(Collectors.toList());
 
@@ -45,7 +47,7 @@ public class ExemploService {
         });
 
         // Aguardando todos finalizar
-        List<String> resultAll = allCompletableFuture.get();
+        List<String> resultAll = allCompletableFuture.get(5, TimeUnit.MINUTES);
         logger.info("Total Processados: " + resultAll.size());
 
         // Obtendo falhas
